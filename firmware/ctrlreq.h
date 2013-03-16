@@ -1,0 +1,7 @@
+#ifndef PCBWRITER_CTRLREQ_H
+#define PCBWRITER_CTRLREQ_H
+
+#define REQ_SET_SPEED 0x80
+#define REQ_ENABLE_DEBUG_OUT 0x81
+
+#endif
