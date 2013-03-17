@@ -155,15 +155,15 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
     } */
 }
 
-unsigned int foo_idx = 0;
+unsigned int dma_data_idx = 0;
 
 static void data_rx_cb(usbd_device *usbd_dev, u8 ep)
 {
     (void)ep;
     
-    int len = usbd_ep_read_packet(usbd_dev, 0x01, &dma_data[foo_idx], 64);
-    foo_idx += len;
-    foo_idx = (foo_idx % 8192);
+    int len = usbd_ep_read_packet(usbd_dev, 0x01, &dma_data[dma_data_idx + K_LEFT_OVERSCAN], 64);
+    dma_data_idx += len;
+    dma_data_idx = (dma_data_idx % K_IMAGE_WIDTH);
     
     // gpio_toggle(GPIOC, GPIO5);
 }

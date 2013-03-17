@@ -6,17 +6,23 @@
 #include <libopencm3/stm32/f4/spi.h>
 #include <libopencm3/cm3/nvic.h>
 
-uint8_t dma_data[10000] __attribute__((aligned(4)));
-const unsigned int scanline_len = 8200; //9500;
+uint8_t dma_data[K_SCANLINE_LEN] __attribute__((aligned(4)));
 
 void dma_setup(void)
 {
-    /* Setup data (FIXME: move elsewhere) */
+    /* Setup data */
     unsigned int i;
-    for(i=0; i<scanline_len; i++) {
+    /* Debug only (adjust overscan and image width) */
+    /* for(i=0; i < K_LEFT_OVERSCAN; i++) {
         dma_data[i] = 0x00;
     }
-    dma_data[scanline_len-1] = 0xFF;
+    for(; i < (K_LEFT_OVERSCAN + K_IMAGE_WIDTH); i++) {
+        dma_data[i] = 0xFF;
+    } */
+    for(i=0; i<(K_SCANLINE_LEN-1); i++) {
+        dma_data[i] = 0x00;
+    }
+    dma_data[K_SCANLINE_LEN-1] = 0xFF;
     
     /* Enable peripheral clocks. */
     rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_DMA1EN | RCC_AHB1ENR_IOPEEN);
@@ -40,6 +46,20 @@ void dma_setup(void)
     nvic_set_priority(NVIC_DMA1_STREAM4_IRQ, 1);
 }
 
+void laser_on(void)
+{
+    // FIXME: make sure DMA is off
+    // Note that the SPI hardware keeps the data line on its last level after
+    // the last data byte has been sent.
+    spi_write(SPI2, 0xFF);
+}
+
+void laser_off(void)
+{
+    // FIXME: make sure DMA is off
+    spi_write(SPI2, 0x00);
+}
+
 void start_dma(void)
 {
     dma_channel_select(DMA1, DMA_STREAM4, DMA_SxCR_CHSEL_0);
@@ -50,7 +70,7 @@ void start_dma(void)
     dma_set_transfer_mode(DMA1, DMA_STREAM4, DMA_SxCR_DIR_MEM_TO_PERIPHERAL);
     dma_enable_transfer_complete_interrupt(DMA1, DMA_STREAM4);
     
-    dma_set_number_of_data(DMA1, DMA_STREAM4, scanline_len);
+    dma_set_number_of_data(DMA1, DMA_STREAM4, K_SCANLINE_LEN);
     dma_set_peripheral_address(DMA1, DMA_STREAM4, (uint32_t)&SPI2_DR);
     dma_set_memory_address(DMA1, DMA_STREAM4, (uint32_t)dma_data);
     
@@ -67,7 +87,7 @@ void spi_setup(void)
     spi_reset(SPI2);
     spi_init_master(SPI2, SPI_CR1_BAUDRATE_FPCLK_DIV_2, SPI_CR1_CPOL_CLK_TO_0_WHEN_IDLE,
                     SPI_CR1_CPHA_CLK_TRANSITION_1, SPI_CR1_DFF_8BIT,
-                    SPI_CR1_LSBFIRST);
+                    SPI_CR1_MSBFIRST);
     spi_enable_software_slave_management(SPI2);
     spi_set_nss_high(SPI2);
     

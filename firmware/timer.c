@@ -2,6 +2,7 @@
 #include "motorctrl.h"
 #include "pins.h"
 #include "dma_spi.h"
+#include "statusled.h"
 
 #include <libopencm3/stm32/f4/rcc.h>
 #include <libopencm3/stm32/f4/gpio.h>
@@ -47,30 +48,62 @@ volatile int n_overflow = 0;
 
 void tim1_up_tim10_isr(void)
 {
-    timer_clear_flag(TIM1, TIM_SR_UIF);
-    if(n_overflow <= 2) n_overflow++;
+    if(timer_get_flag(TIM1, TIM_SR_UIF)) {
+        timer_clear_flag(TIM1, TIM_SR_UIF);
+        if(n_overflow <= 8) n_overflow++;
+    }
 }
 
 int last_ccr = 0;
+int dma_enabled = 0;
+int motor_ok = 16;
 
 void tim1_cc_isr(void)
 {
-    int ccr = TIM_CCR2(TIM1);
-    int save_n_overflow = n_overflow;
-    n_overflow = 0;
-    
-    timer_clear_flag(TIM1, TIM_SR_CC2IF);
-    
-    start_dma();
-    
-    int delta = (ccr + (save_n_overflow<<16)) - last_ccr;
-    
-    //gpio_set(DEBUG0_OUT_PORT, DEBUG0_OUT_PIN);
-    //gpio_clear(DEBUG0_OUT_PORT, DEBUG0_OUT_PIN);
-    
-    last_ccr = ccr;
-    
-    if(delta < 40000)
-        motor_ctrl_step(delta);
+    if(timer_get_flag(TIM1, TIM_SR_CC2IF)) {
+        int ccr = TIM_CCR2(TIM1);
+        int save_n_overflow = n_overflow;
+        n_overflow = 0;
+        
+        int delta = (ccr + (save_n_overflow<<16)) - last_ccr;
+        
+        if(dma_enabled)
+            start_dma();
+        
+        timer_clear_flag(TIM1, TIM_SR_CC2IF);
+        
+        //gpio_set(DEBUG0_OUT_PORT, DEBUG0_OUT_PIN);
+        //gpio_clear(DEBUG0_OUT_PORT, DEBUG0_OUT_PIN);
+        
+        last_ccr = ccr;
+        
+        int speed_delta = motor_ctrl_step(delta);
+        // Wait for motor speed to get stable.
+        if(!dma_enabled && speed_delta > -10 && speed_delta < 10) {
+            if(motor_ok == 0) {
+                set_status(LED_GREEN, 1);
+                set_status(LED_RED, 0);
+                dma_enabled = 1;
+            } else {
+                motor_ok--;
+            }
+        }
+        
+        if(dma_enabled && (speed_delta < -100 || speed_delta > 100)) {
+            set_status(LED_GREEN, 0);
+            set_status(LED_RED, 1);
+            dma_enabled = 0;
+            motor_ok = 16;
+        }
+        
+        if(delta < 100) {
+            gpio_set(GPIOB, GPIO0);
+            __asm("nop");
+            __asm("nop");
+            __asm("nop");
+            __asm("nop");
+            gpio_clear(GPIOB, GPIO0);
+        }
+    }
 }
 
