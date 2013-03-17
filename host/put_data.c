@@ -7,6 +7,8 @@
 const uint16_t PCBWRITER_VENDOR = 0x1337;
 const uint16_t PCBWRITER_PRODUCT = 0xABCD;
 
+const int K_IMAGE_WIDTH = 6000;
+
 const unsigned int PCBWRITER_TIMEOUT = 100; // ms
 
 /* double func(double x)
@@ -26,18 +28,18 @@ double func(double x)
 }
 
 void generate_data(uint8_t* data) {
-    for(unsigned int i=0; i<8192; i++) {
+    for(unsigned int i=0; i<K_IMAGE_WIDTH; i++) {
         data[i] = 0;
     }
     
     double error = 0.0;
-    for(unsigned int i=0; i<8*8192; i++) {
-        double x = ((double)i)/(4*8192) - 1.0;
+    for(unsigned int i=0; i<8*K_IMAGE_WIDTH; i++) {
+        double x = ((double)i)/(4*K_IMAGE_WIDTH) - 1.0;
         double y = func(x);
         
         error += y;
         if(error > 1.0) {
-            data[i>>3] |= (1 << (i & 7));
+            data[i>>3] |= (0x80 >> (i & 7));
             error -= 1.0;
         }
     }
@@ -97,12 +99,14 @@ int main(int argc, char** argv)
     }
     
     int transferred;
-    unsigned char data[8192];
+    unsigned char data[K_IMAGE_WIDTH];
     generate_data(data);
     
     err = libusb_bulk_transfer(handle, 0x01, data, sizeof(data), &transferred, PCBWRITER_TIMEOUT);
     if(err || transferred != sizeof(data)) {
         fprintf(stderr, "Failed to communicate with endpoint.\n");
+        fprintf(stderr, "err = %d\n", err);
+        fprintf(stderr, "transferred = %d\n", transferred);
     }
     
     libusb_close(handle);

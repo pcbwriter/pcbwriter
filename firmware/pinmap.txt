@@ -3,5 +3,7 @@ PB15: Laser modulation output (MOSI)
 
 PA4: Motor speed control output (DAC)
 
+PA2: USART output (115200, 8N1)
+
 PB0: Debug output
 PB1: Debug output

@@ -3,6 +3,7 @@
 
 void set_speed(int speed);
 void enable_debug_out(int enable);
-void motor_ctrl_step(int delta);
+void motor_startup(void);
+int motor_ctrl_step(int delta);
 
 #endif
