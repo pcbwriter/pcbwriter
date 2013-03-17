@@ -19,7 +19,7 @@
 ## Modified by Norbert Braun for the PCBWriter project.
 
 BINARY = pcbwriter
-OBJS += dac.o usart.o timer.o dma_spi.o motorctrl.o usb.o statusled.o
+OBJS += dac.o usart.o timer.o dma_spi.o motorctrl.o usb.o statusled.o flash.o
 
 LDSCRIPT = stm32f4-discovery.ld
 
