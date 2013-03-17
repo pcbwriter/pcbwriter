@@ -24,11 +24,19 @@
 #include "usart.h"
 #include "motorctrl.h"
 #include "dma_spi.h"
+#include "flash.h"
 #include <libopencm3/stm32/f4/rcc.h>
 #include <libopencm3/stm32/f4/gpio.h>
 #include <libopencm3/usb/usbd.h>
 #include <libopencm3/usb/cdc.h>
 #include <libopencm3/cm3/scb.h>
+
+#define IS_DEVICE_TO_HOST(x) (x & 0x80)
+#define IS_HOST_TO_DEVICE(x) ((x & 0x80) == 0)
+
+#define PCBUSBLOG(...) printf(__VA_ARGS__)
+
+#define DATA_LEN 64
 
 static const struct usb_device_descriptor dev = {
     .bLength = USB_DT_DEVICE_SIZE,
@@ -100,7 +108,7 @@ static const char *usb_strings[] = {
     "PCBWriter",
 };
 
-u8 data[4];
+u8 data[DATA_LEN];
 
 static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8 **buf,
         u16 *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
@@ -109,19 +117,21 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
     (void)buf;
     (void)usbd_dev;
     (void)len;
+
+    PCBUSBLOG("Got request type: bmRequestType: 0x%x bRequest: 0x%x len: 0x%x\n", req->bmRequestType, req->bRequest, *len);
     
     if((req->bmRequestType & 0x60) == 0x40) { // Vendor request
         if(req->bRequest == REQ_SET_SPEED) {
-            if(req->bmRequestType & 0x80 || *len != 2)
+            if(!IS_HOST_TO_DEVICE(req->bmRequestType) || *len != 2)
                 return USBD_REQ_NOTSUPP;
             
             int des_speed = (*buf)[0] + ((*buf)[1] << 8);
-            // printf("Set speed: %d\n", des_speed);
+            PCBUSBLOG("Set speed: %d\n", des_speed);
             set_speed(des_speed);
             
             return USBD_REQ_HANDLED;
         } else if(req->bRequest == REQ_ENABLE_DEBUG_OUT) {
-            if(req->bmRequestType & 0x80 || *len != 1)
+            if(!IS_HOST_TO_DEVICE(req->bmRequestType) || *len != 1)
                 return USBD_REQ_NOTSUPP;
             
             if((*buf)[0])
@@ -129,10 +139,49 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
             else
                 enable_debug_out(0);
             
+            PCBUSBLOG("Set debug: %d\n", (*buf)[0]);
+
+            return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_SET_PERSISTENT_FLASH) {
+            if (!IS_HOST_TO_DEVICE(req->bmRequestType) || *len != 0) {
+                return USBD_REQ_NOTSUPP;
+            }
+
+            if (req->wIndex > 4096) {
+                return USBD_REQ_NOTSUPP;
+            }
+
+            PCBUSBLOG("Store to flash: 0x%x at index: 0x%x\n", req->wValue, req->wIndex);
+            pcb_flash_store(req->wIndex, req->wValue);
+
+            return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_GET_PERSISTENT_FLASH) {
+            if (!IS_DEVICE_TO_HOST(req->bmRequestType) || *len <= 0) {
+                return USBD_REQ_NOTSUPP;
+            }
+
+            int index = req->wIndex;
+            int length = req->wValue;
+
+            PCBUSBLOG("Get from flash: index: 0x%x len: 0x%x\n", index, length);
+
+            if (length > DATA_LEN) {
+                return USBD_REQ_NOTSUPP;
+            }
+
+            for (int i = 0; i < length; i++) {
+                data[i] = pcb_flash_restore(index + i);
+            }
+
+            *buf = data;
+            *len = length;
+
             return USBD_REQ_HANDLED;
         }
     }
     
+    PCBUSBLOG("Got unkown request: 0x%x\n", req->bmRequestType);
+
     return USBD_REQ_NEXT_CALLBACK;
     
     /* if(req->bRequest == 0x80) {
