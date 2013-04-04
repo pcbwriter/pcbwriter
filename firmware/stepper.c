@@ -12,7 +12,7 @@ static int current_state = 0;
 
 
 void stepper_setup(void) {
-	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPBEN);
+	rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPDEN);
 
 	/* Set GPIO12-15 (in GPIO port D) to 'output push-pull'. */
 	gpio_mode_setup(STEPPER_PORT, GPIO_MODE_OUTPUT,
