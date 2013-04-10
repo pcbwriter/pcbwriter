@@ -9,3 +9,8 @@ PA2: USART output (115200, 8N1)
 
 PB0: Debug output
 PB1: Debug output
+
+PD0: Stepper orange
+PD1: Stepper brown
+PD2: Stepper yellow
+PD3: Stepper black
