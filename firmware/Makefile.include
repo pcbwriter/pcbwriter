@@ -28,7 +28,7 @@ OBJDUMP		= $(PREFIX)-objdump
 GDB		= $(PREFIX)-gdb
 FLASH		= $(shell which st-flash)
 
-CFLAGS		+= -Os -g \
+CFLAGS		+= -Os -g -std=gnu99 \
 		   -I$(TOOLCHAIN_DIR)/include \
 		   -Wall -Wextra -Wimplicit-function-declaration \
 		   -Wredundant-decls -Wmissing-prototypes -Wstrict-prototypes \
