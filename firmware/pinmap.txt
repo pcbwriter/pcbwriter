@@ -1,5 +1,7 @@
 PE11: Sync input (photo diode)
-PB15: Laser modulation output (MOSI)
+PB13: Laser idle ON
+PB14: Laser low power ON
+PB15: Laser high power ON (modulation output: MOSI)
 
 PA4: Motor speed control output (DAC)
 

@@ -29,7 +29,7 @@ void set_speed(int speed)
 /* Initiate motor startup sequence. */
 void motor_startup(void)
 {
-    laser_on();
+    laser_low_on();
     set_motor_power(K_STARTUP_PWR);
 }
 

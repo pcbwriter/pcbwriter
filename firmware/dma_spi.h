@@ -7,8 +7,8 @@ void dma_setup(void);
 void start_dma(void);
 void spi_setup(void);
 
-void laser_on(void);
-void laser_off(void);
+void laser_low_on(void);
+void laser_low_off(void);
 
 void dma_loop(void);
 

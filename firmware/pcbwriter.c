@@ -41,8 +41,6 @@ int main(void)
     set_speed(20000);
     motor_startup();
     
-    laser_on();
-    
     while(1)
         usb_poll();
 }

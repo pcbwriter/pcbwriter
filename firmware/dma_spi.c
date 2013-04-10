@@ -19,21 +19,23 @@ void dma_setup(void)
     for(; i < (K_LEFT_OVERSCAN + K_IMAGE_WIDTH); i++) {
         dma_data[i] = 0xFF;
     } */
-    for(i=0; i<(K_SCANLINE_LEN-1); i++) {
+    for(i=0; i<K_SCANLINE_LEN; i++) {
         dma_data[i] = 0x00;
     }
-    dma_data[K_SCANLINE_LEN-1] = 0xFF;
     
     /* Enable peripheral clocks. */
-    rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_DMA1EN | RCC_AHB1ENR_IOPEEN);
+    rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_DMA1EN);
     rcc_peripheral_enable_clock(&RCC_APB2ENR, RCC_APB2ENR_TIM8EN | RCC_APB2ENR_SYSCFGEN);
     
     /* Enable GPIO clocks. */
-    rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPBEN | RCC_AHB1ENR_IOPDEN);
+    rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPBEN);
     
     /* SCK (Not needed for our application.) */
     /* gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLDOWN, GPIO13);
     gpio_set_af(GPIOB, GPIO_AF5, GPIO13); */
+    
+    /* Non-DMA output pins (idle ON, low power on) */
+    gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13 | GPIO14);
     
     /* MOSI */
     gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLDOWN, GPIO15);
@@ -46,7 +48,7 @@ void dma_setup(void)
     nvic_set_priority(NVIC_DMA1_STREAM4_IRQ, 1);
 }
 
-void laser_on(void)
+/* void laser_on(void)
 {
     // FIXME: make sure DMA is off
     // Note that the SPI hardware keeps the data line on its last level after
@@ -58,10 +60,24 @@ void laser_off(void)
 {
     // FIXME: make sure DMA is off
     spi_write(SPI2, 0x00);
+} */
+
+/* Switch laser ON in low-power mode (to find index diode) */
+void laser_low_on(void)
+{
+    gpio_set(GPIOB, GPIO14);
+}
+
+/* Switch off low power mode */
+void laser_low_off(void)
+{
+    gpio_clear(GPIOB, GPIO14);
 }
 
 void start_dma(void)
 {
+    laser_low_off();
+    
     dma_channel_select(DMA1, DMA_STREAM4, DMA_SxCR_CHSEL_0);
     dma_set_priority(DMA1, DMA_STREAM4, DMA_SxCR_PL_VERY_HIGH);
     dma_set_peripheral_size(DMA1, DMA_STREAM4, DMA_SxCR_PSIZE_8BIT);
@@ -103,6 +119,8 @@ void dma1_stream4_isr(void)
     
     dma_done = 1;
     
-    gpio_set(GPIOE, GPIO0);
-    gpio_clear(GPIOE, GPIO0);
+    /* Make sure laser high-power mode is OFF */
+    spi_write(SPI2, 0x00);
+    
+    laser_low_on();
 }
