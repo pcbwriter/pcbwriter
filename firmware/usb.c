@@ -182,8 +182,6 @@ static void data_tx_cb(usbd_device *usbd_dev, u8 ep)
         usbd_ep_write_packet(usbd_dev, 0x82, (char*)&debug_buf[buf_start], sizeof(struct debug_data_t));
         buf_start = (buf_start+1)%16;
     }
-    
-    gpio_clear(GPIOB, GPIO0);
 }
 
 static void set_config(usbd_device *usbd_dev, u16 wValue)
@@ -227,8 +225,6 @@ void usb_put_debug_packet(struct debug_data_t* debug_data)
         buf_end = (buf_end+1)%16;
     }
     // Otherwise, discard the packet.
-    
-    gpio_set(GPIOB, GPIO0);
 }
 
 void usb_poll(void)
