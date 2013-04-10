@@ -99,7 +99,7 @@ clean:
 	@printf "  FLASH  $<\n"
 	$(Q)$(FLASH) write $(*).bin 0x8000000
 
-.PHONY: images clean
+.PHONY: images clean flash
 
 -include $(OBJS:.o=.d)
 
