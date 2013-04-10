@@ -5,21 +5,20 @@
 #include <libopencm3/stm32/timer.h>
 #include <stdio.h>
 
-const int kNUMBER_OF_STATES = 4;
 //const int states[][4] = {{1,0,0,0},{1,1,0,0},{0,1,0,0},{0,1,1,0},{0,0,1,0},{0,0,1,1},{0,0,0,1},{1,0,0,1}};
 const int states[][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 static int current_state = 0;
-
+const int kNUMBER_OF_STATES = sizeof(states)/sizeof(states[0]);
 
 void stepper_setup(void)
 {
     rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPDEN);
     
-    /* Set GPIO12-15 (in GPIO port D) to 'output push-pull'. */
+    /* Set stepper output pins to 'output push-pull'. */
     gpio_mode_setup(STEPPER_PORT, GPIO_MODE_OUTPUT,
                     GPIO_PUPD_NONE, STEPPER_BLACK_PIN | STEPPER_BROWN_PIN | STEPPER_ORANGE_PIN | STEPPER_YELLOW_PIN);
     
-    /* Switch off all LEDs. */
+    /* Switch off all stepper outputs. */
     gpio_clear(STEPPER_PORT, STEPPER_BLACK_PIN | STEPPER_BROWN_PIN | STEPPER_ORANGE_PIN | STEPPER_YELLOW_PIN);
 }
 
