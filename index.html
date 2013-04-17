@@ -1,0 +1,237 @@
+<html>
+    <head>
+        <meta charset='utf-8'>
+        <link href='http://fonts.googleapis.com/css?family=Dosis:400,500' rel='stylesheet' type='text/css' />
+        <style type="text/css">
+            body { 
+                font-family: 'Dosis', sans-serif;
+                font-size: 150%;
+                padding-left: 30px;
+                padding-right: 30px;
+                background-color: #fefefe;
+            }
+            #head_container {
+                position:fixed;
+                top: 0;
+                left: 30px;
+                right: 30px;
+                display:block;
+                background-color: #fefefe;
+            }
+            #head {
+                display: table;
+                float: left;
+                padding-bottom: 15px;
+            }
+            #head > #logo {
+                font-size: 300%;
+            }
+            #head > #logo > span#pcb {
+                color: #00A;
+                font-weight: bold;
+            }
+            #head > #logo_subtitle {
+                font-size: 70%;
+                margin-top: -15;
+                padding-top: 0;
+                padding-right: 10px;
+                text-align: right;
+            }
+            #nav {
+                float: right;
+                padding-top: 40px;
+            }
+            #nav > nav > span {
+                padding-left: 15px;
+                padding-right: 15px;
+                font-weight: bold;
+                color: #00A;
+            }
+            #nav > nav > a {
+                color: #000;
+                text-decoration: none;
+            }
+            #nav > nav > a:hover {
+                text-decoration: underline;
+            }
+            #head_container, #head, #nav {
+                -webkit-touch-callout: none;
+                -webkit-user-select: none;
+                -khtml-user-select: none;
+                -moz-user-select: none;
+                -ms-user-select: none;
+                user-select: none;
+                cursor: default;
+            }
+            #content {
+                clear: both;
+                text-align: justify;
+                margin-top: 112px;
+            }
+            h2, h3 {
+                margin-bottom: -10px;
+            }
+            a { 
+                color: #00A;
+                text-decoration: none;
+            }
+            a:hover {
+                text-decoration: underline;
+            }
+            a.anchor {
+                display: block; 
+                position: relative; 
+                top: -150px; 
+                visibility: hidden;
+            }
+            ::selection {
+                background: #00A;
+                color: #fff;
+                }
+            ::-moz-selection {
+                background: #00A; 
+                color: #fff; 
+            }
+            ul.images {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                text-align: left;
+                margin: 1em -0.5em;
+            }
+            ul.images li {
+                display: inline-block;
+                vertical-align: top;
+                margin: 0.5em;
+                padding: 0.5em;
+                border: 1px solid #ddd;
+                background-color: #f9f9f9;
+                border-radius: 3px;
+            }
+            ul.images li span {
+                display: block;
+                margin-top: 0.5em;
+                font-size: 0.75em;
+            }
+        </style>
+    </head>
+    <body>
+        <div id="head_container">
+            <div id="head">
+                <div id="logo">
+                    <span id="pcb">PCB</span>Writer
+                </div>
+                <div id="logo_subtitle">
+                    advanced pcb production
+                </div>
+            </div>
+            <div id="nav">
+                <nav>
+                    <a href="#about">about</a> <span>|</span>
+                    <a href="#documentation">documentation</a> <span>|</span>
+                    <a href="#workshop">workshop</a>
+                </nav>
+            </div>
+        </div>
+        <div id="content">
+            <a class="anchor" name="about"></a>
+            <p>
+                Quickly and reliably create high-quality PCBs!
+            </p>
+            <ul class="images">
+                <li>
+                    <img src="IMG_3577_small.jpg" alt="Alternativtext"/>
+                    <span>laser in the dark</span>
+                </li>
+                <li>
+                    <img src="IMG_3586_small.jpg" alt="Alternativtext"/>
+                    <span>laser in test fixture</span>
+                </li>
+                <li>
+                    <img src="IMG_3594_small.jpg" alt="Alternativtext"/>
+                    <span>laser in test fixture II</span>
+                </li>
+                <li>
+                    <img src="IMG_3599_small.jpg" alt="Alternativtext"/>
+                    <span>chemical stripping unit</span>
+                </li>
+                <li>
+                    <img src="IMG_3604_small.jpg" alt="Alternativtext"/>
+                    <span>hipster picture with STM32 board</span>
+                </li>
+            </ul>
+            <p>
+                The PCBWriter uses a laser diode to directly expose the photoresist on PCBs. The direct exposure technique removes a lot of the typical problems with toner transfer or laser printer transparencies, allowing to reliably create PCBs even with the small structures needed for todays chips.
+            </p>
+            <p>
+                A similar device has been developed at <a href="http://www.das-labor.org/wiki/LaserExposer">Das Labor</a> in Bochum. Experience there shows that the technique is indeed able to produce very fine structures with high fidelity.
+            </p>
+            <p>
+                All schematics, firmware, etc. will be published under an open-source license (BSD style).
+            </p>
+            <h3>Status of the project</h3>
+            <p>
+                The PCBWriter is currently under development. All required parts (UV laser diode, mirror assembly, y axis) have been sourced, assembly and firmware development are nearly done. Resolution and quality of the exposed PCBs has been evaluated in various test fixtures. The final assembly is currently in progress
+            </p>
+            <p>
+                If you are interested to participate in the development, please contact us! A public is avaible at <a href="http://www.gith">github</a>.
+            </p>
+            <h3>The workshop </h3>
+            <p>
+                We will shortly be offering a workshop where participants can build their own PCBWriter for use in their own workshop or local Hackerspace/Fablab. The workshop is partly fundedby <a href="http://www.vdi.de">VDI</a> and BMBF. Depending on funding details, thecost for one PCBWriter will be around 100 - 200€. (Obviously, particiants can, and probably should, work in groups).
+            </p>
+            <p>
+                We are currently planning to have the workshop on a weekend (Friday evening - Sunday), probably at some time in March. The exact date will be announced on this website, as will be registration details.
+            </p>
+            <p>
+                For members of Fablabs in Germany, travel and lodging costs may be covered by the "Verbund offener Werkstätten" <a href="http://www.offene-werkstaetten.org/"></a>.
+            </p>
+            <h3>Why?</h3>
+            <p>
+                Printed circuit boards are usually produced by protecting parts of the copper layer, then etching away the unprotected parts. To selectively protect the copper, various methods can be used.
+            </p>
+            <p>
+                The first method exposes the photoresist on the PCB through a mask. This method is usually employed in commercial applications, as a single mask can be used to quickly expose large runs of PCBs. For hobbists, however, creating high-quality masks can be a challenge. Normally, hobbist masks are created by printing on transparencies using a laser printer. With many laser printers, the black areas have tiny holes which get transferred to the PCB, potentially breaking thin traces.
+            </p>
+            <p>
+                The second method, toner transfer, prints on some kind of special paper and then transfers the toner to the PCB, using the toner as an etch mask. However, as laser printers are not really designed with this application in mind, the quality of the results varies a lot between printer models.
+            </p>
+            <p>
+                Both methods, laser transparencies and toner transfer, are actually quite workable for PCBs with large structures (think DIP parts). Unfortunately, these days, many interesting parts come in tiny packages - think about your typical acceleromenter! Also, in space- or weight-constrained applications, like the ever more popular drones, one actually wants to use parts in the smallest packages available.
+            </p>
+            <p>
+                The PCBWriter project aims to make it possible to quickly and reliably create high-quality, one-of PCBs.
+            </p>
+            <h3>How does it work?</h3>
+            <p>
+                The PCBWriter essentially works like a laser printer. A laser beam is deflected by a rotating polygon mirror and thus ``scanned'' over a line on the PCB (see picture). The PCB is moved perpendicular to the line, thus writing the image line-by-line.
+            </p>
+            <p>
+                <a href="Figure:">from Aachen slides</a>
+            </p>
+            <p>
+                To create an image, rather than exposing the whole PCB, the laser needs to be modulated. An index diode near the polygon mirror allows to synchronize the modulation of the laser to the rotation of the mirror.
+            </p>
+            <p>
+                The mirror assembly comes from an old laser printer. However, laser printers usually use near-IR lasers, while the photoresist on PCBs is sensitive to UV light. Thus, the IR laser diode was replaced by a (much stronger) UV laser diode (~1.5W, 445nm) from eBay. The assembly for the movement of the PCB comes from an old flatbed scanner.
+            </p>
+            <p>
+                We use a <a href="http://www.st.com/internet/mcu/class/1734.jsp">STM32</a>
+                microcontroller. Unlike the simpler 8 bit AVR microcontrollers (Arduino etc.), the STM32 offers vastly more peripherals (like DMA engines) and much faster execution speed. The PCB artwork is rendered to an image on the host PC, then transferred to the STM32 via USB. The STM32 generates the modulation for the laser diode from the image, controls the rotation of the mirror, and controls the movement of the PCB.
+            </p>
+            <p>
+                The <a href="http://dingfabrik.de/wp-content/uploads/2012/09/LaserBelichter_final.pdf">slides</a> from our talk in Aachen are available as PDF (in German).
+            </p>
+            <h2>Documentation</h2>
+            <a class="anchor" name="documentation"></a>
+            <p>
+            	Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus non pulvinar erat. Phasellus tempus vehicula nibh id sodales. Suspendisse potenti. Proin sed lobortis mauris. Curabitur mattis purus sit amet nibh condimentum pretium. Donec lobortis tempor ante, eu porttitor tellus ultrices egestas. Nulla vitae massa libero. Vivamus auctor interdum rhoncus. Nam gravida rutrum justo vel venenatis. Proin non sem felis, id condimentum dui. Praesent vitae felis lorem, et scelerisque felis. Pellentesque condimentum, dui quis posuere bibendum, elit magna egestas urna, sed scelerisque odio nulla sit amet est. Donec lectus metus, gravida vel aliquam vitae, varius id nunc. Praesent aliquam mauris arcu.
+            </p>
+            <h2>Workshop</h2>
+            <a class="anchor" name="workshop"></a>
+            <p>
+            	Pellentesque congue, lectus at pulvinar tincidunt, elit arcu egestas tellus, vel rutrum purus sapien vel dui. Etiam varius fermentum vestibulum. Sed id adipiscing eros. Donec ultricies elit ut sem euismod sit amet hendrerit purus tempus. Suspendisse vehicula feugiat magna egestas molestie. Aenean fermentum, dui ac pretium ornare, purus augue dapibus urna, non dapibus eros purus et orci. Nulla et quam ac mi vehicula feugiat et et mauris. Praesent sed lacus lorem. Ut in molestie augue. Proin porttitor mollis lorem, sit amet porttitor justo dapibus elementum. Pellentesque laoreet nunc a tellus tristique dapibus. Praesent vulputate cursus ante et malesuada.
+            </p>
+            </div>
+    </body>
+</html>
