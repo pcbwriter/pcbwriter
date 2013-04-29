@@ -5,8 +5,8 @@
 #include <libopencm3/stm32/timer.h>
 #include <stdio.h>
 
-//const int states[][4] = {{1,0,0,0},{1,1,0,0},{0,1,0,0},{0,1,1,0},{0,0,1,0},{0,0,1,1},{0,0,0,1},{1,0,0,1}};
-const int states[][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+const int states[][4] = {{1,0,0,0},{1,1,0,0},{0,1,0,0},{0,1,1,0},{0,0,1,0},{0,0,1,1},{0,0,0,1},{1,0,0,1}};
+//const int states[][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
 static int current_state = 0;
 const int kNUMBER_OF_STATES = sizeof(states)/sizeof(states[0]);
 
