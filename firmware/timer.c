@@ -28,7 +28,7 @@ void timer_setup(void)
     /* Configure input capture. */
     timer_ic_disable(TIM1, TIM_IC2);
     timer_ic_set_input(TIM1, TIM_IC2, TIM_IC_IN_TI2);
-    timer_ic_set_polarity(TIM1, TIM_IC2, TIM_IC_RISING);
+    timer_ic_set_polarity(TIM1, TIM_IC2, TIM_IC_FALLING);
     timer_ic_set_prescaler(TIM1, TIM_IC2, TIM_IC_PSC_OFF);
     timer_ic_set_filter(TIM1, TIM_IC2, TIM_IC_OFF);
     timer_ic_enable(TIM1, TIM_IC2);
