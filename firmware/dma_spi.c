@@ -36,6 +36,7 @@ void dma_setup(void)
     
     /* Non-DMA output pins (idle ON, low power on) */
     gpio_mode_setup(GPIOB, GPIO_MODE_OUTPUT, GPIO_PUPD_NONE, GPIO13 | GPIO14);
+    gpio_set(GPIOB, GPIO13);
     
     /* MOSI */
     gpio_mode_setup(GPIOB, GPIO_MODE_AF, GPIO_PUPD_PULLDOWN, GPIO15);
