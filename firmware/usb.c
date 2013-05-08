@@ -19,12 +19,14 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include "usb.h"
 #include "ctrlreq.h"
 #include "usart.h"
 #include "motorctrl.h"
 #include "dma_spi.h"
 #include "flash.h"
+#include "stepper.h"
 #include <libopencm3/stm32/f4/rcc.h>
 #include <libopencm3/stm32/f4/gpio.h>
 #include <libopencm3/usb/usbd.h>
@@ -176,6 +178,44 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
             *buf = data;
             *len = length;
 
+            return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_GET_STEPPER_STATUS) {
+            if(!IS_DEVICE_TO_HOST(req->bmRequestType)) {
+                return USBD_REQ_NOTSUPP;
+            }
+            
+            /* Sanity check */
+            if(DATA_LEN < 4)
+                return USBD_REQ_NOTSUPP;
+            
+            data[0] = 0;
+            if(!stepper_idle()) data[0] |= 0x01;
+            if(stepper_is_homed) data[0] |= 0x02;
+            
+            data[1] = 0;
+            data[2] = (stepper_current_pos & 0x00FF);
+            data[3] = (stepper_current_pos & 0xFF00) >> 8;
+            
+            *buf = data;
+            *len = 4;
+            
+            return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_HOME_STEPPER) {
+            stepper_home();
+            
+            return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_MOVE_STEPPER) {
+            int16_t delta_pos = (int16_t) req->wValue;
+            
+            if(req->wIndex)
+                stepper_move(delta_pos);
+            else
+                stepper_move_to(delta_pos);
+            
+            return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_STEPPER_OFF) {
+            stepper_off();
+            
             return USBD_REQ_HANDLED;
         }
     }

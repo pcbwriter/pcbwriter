@@ -6,6 +6,7 @@
 #include "usb.h"
 #include "statusled.h"
 #include "flash.h"
+#include "stepper.h"
 #include <libopencm3/stm32/f4/rcc.h>
 #include <libopencm3/stm32/f4/gpio.h>
 #include <libopencm3/stm32/timer.h>
@@ -37,6 +38,7 @@ int main(void)
     dac_setup();
     usb_setup();
     pcb_flash_setup();
+    stepper_setup();
     
     printf("\nPCBWriter starting...\n");
     

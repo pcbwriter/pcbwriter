@@ -3,3 +3,4 @@
 *.hex
 *.list
 *.srec
+/acc_profile.c

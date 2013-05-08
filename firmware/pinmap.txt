@@ -14,3 +14,5 @@ PD0: Stepper orange
 PD1: Stepper brown
 PD2: Stepper yellow
 PD3: Stepper black
+
+PD7: Home switch IN

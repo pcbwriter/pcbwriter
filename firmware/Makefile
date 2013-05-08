@@ -19,9 +19,11 @@
 ## Modified by Norbert Braun for the PCBWriter project.
 
 BINARY = pcbwriter
-OBJS += dac.o usart.o timer.o dma_spi.o motorctrl.o usb.o statusled.o flash.o stepper.o
+OBJS += dac.o usart.o timer.o dma_spi.o motorctrl.o usb.o statusled.o flash.o stepper.o acc_profile.o
 
 LDSCRIPT = stm32f4-discovery.ld
 
 include Makefile.include
 
+acc_profile.c: acc_profile.py
+	./acc_profile.py > acc_profile.c

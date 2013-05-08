@@ -22,4 +22,6 @@
 #define STEPPER_YELLOW_PIN GPIO2
 #define STEPPER_BLACK_PIN GPIO3
 
+#define HOME_PIN GPIO7
+
 #endif
