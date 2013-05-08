@@ -1,0 +1,227 @@
+Cmp-Mod V01 Created by CVpcb (20090216-final) date = 2013-03-26T16:54:42 CET
+
+BeginCmp
+TimeStamp = /514CCD00;
+Reference = C1;
+ValeurCmp = C;
+IdModule  = SM0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F4134;
+Reference = C2;
+ValeurCmp = 100nF;
+IdModule  = SM0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F413C;
+Reference = C3;
+ValeurCmp = 4.7uF;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F4140;
+Reference = C4;
+ValeurCmp = 4700uF;
+IdModule  = C2;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F4142;
+Reference = C5;
+ValeurCmp = 100nF;
+IdModule  = SM0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F3C70;
+Reference = C6;
+ValeurCmp = 100nF;
+IdModule  = SM0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5150EAA4;
+Reference = C7;
+ValeurCmp = 10uF;
+IdModule  = SM2512;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151C494;
+Reference = C8;
+ValeurCmp = 100nF;
+IdModule  = SM0603;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151B150;
+Reference = D1;
+ValeurCmp = LED;
+IdModule  = LED-0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151B0FA;
+Reference = D2;
+ValeurCmp = DIODE;
+IdModule  = SM1206POL;
+EndCmp
+
+BeginCmp
+TimeStamp = /514CCE47;
+Reference = P1;
+ValeurCmp = CONN_2;
+IdModule  = FLATCONN_2W;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F3FD7;
+Reference = P2;
+ValeurCmp = CONN_4;
+IdModule  = FLATCONN_4;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151B134;
+Reference = P3;
+ValeurCmp = CONN_2;
+IdModule  = FLATCONN_2;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151B0F1;
+Reference = P4;
+ValeurCmp = CONN_2;
+IdModule  = FLATCONN_2W;
+EndCmp
+
+BeginCmp
+TimeStamp = /514CC544;
+Reference = Q1;
+ValeurCmp = FET_N;
+IdModule  = TO220_FLAT;
+EndCmp
+
+BeginCmp
+TimeStamp = /514CCCD0;
+Reference = R1;
+ValeurCmp = R;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514CCD2A;
+Reference = R2;
+ValeurCmp = RVAR;
+IdModule  = TYCO_3213_TRIMMER;
+EndCmp
+
+BeginCmp
+TimeStamp = /514CC55D;
+Reference = R3;
+ValeurCmp = R;
+IdModule  = SM2512;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F3FC3;
+Reference = R4;
+ValeurCmp = 20k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F3FC7;
+Reference = R5;
+ValeurCmp = 20k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F3FC9;
+Reference = R6;
+ValeurCmp = 20k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F4024;
+Reference = R7;
+ValeurCmp = 3k3;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F402B;
+Reference = R8;
+ValeurCmp = 50k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F402F;
+Reference = R9;
+ValeurCmp = 100k;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F4074;
+Reference = R10;
+ValeurCmp = RVAR;
+IdModule  = TYCO_3213_TRIMMER;
+EndCmp
+
+BeginCmp
+TimeStamp = /5150F128;
+Reference = R11;
+ValeurCmp = 0;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151B163;
+Reference = R12;
+ValeurCmp = 330;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151BD32;
+Reference = R13;
+ValeurCmp = 0;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151BD1B;
+Reference = R14;
+ValeurCmp = 0;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /5151C467;
+Reference = R15;
+ValeurCmp = 0;
+IdModule  = SM0805;
+EndCmp
+
+BeginCmp
+TimeStamp = /514CCC87;
+Reference = U1;
+ValeurCmp = LMH6639;
+IdModule  = SOT23_6;
+EndCmp
+
+BeginCmp
+TimeStamp = /514F3ED2;
+Reference = U2;
+ValeurCmp = 74HC14;
+IdModule  = SO14N;
+EndCmp
+
+EndListe

@@ -1,0 +1,3 @@
+[submodule "hardware/kicad-modules"]
+	path = hardware/kicad-modules
+	url = https://github.com/nfbraun/kicad-modules
