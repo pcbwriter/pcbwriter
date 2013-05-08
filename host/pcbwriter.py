@@ -22,6 +22,9 @@ class PCBWriter:
     REQ_MOVE_STEPPER = 0x92
     REQ_STEPPER_OFF = 0x93
     
+    REQ_SET_N_SCANS = 0xA0
+    REQ_SET_AUTOSTEP = 0xA1
+    
     REQ_CAN_SEND = 0xC0
     
     def __init__(self):
@@ -31,6 +34,12 @@ class PCBWriter:
     
     def __del__(self):
         self.stepper_off()
+    
+    def set_n_scans(self, n_scans):
+        self.dev.ctrl_transfer(bmRequestType=0xC0, bRequest=self.REQ_SET_N_SCANS, wValue=n_scans, wIndex=0, data_or_wLength=0, timeout=1000)
+    
+    def set_autostep(self, autostep):
+        self.dev.ctrl_transfer(bmRequestType=0xC0, bRequest=self.REQ_SET_AUTOSTEP, wValue=autostep, wIndex=0, data_or_wLength=0, timeout=1000)
     
     def put_line(self, data, wait=True, fill=False):
         if wait:

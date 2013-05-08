@@ -12,6 +12,9 @@
 #define REQ_MOVE_STEPPER 0x92
 #define REQ_STEPPER_OFF 0x93
 
+#define REQ_SET_N_SCANS 0xA0
+#define REQ_SET_AUTOSTEP 0xA1
+
 #define REQ_CAN_SEND 0xC0
 
 #endif

@@ -217,6 +217,17 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
             stepper_off();
             
             return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_SET_N_SCANS) {
+            max_n_scans = req->wValue;
+            
+            return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_SET_AUTOSTEP) {
+            if(req->wValue)
+                autostep = 1;
+            else
+                autostep = 0;
+            
+            return USBD_REQ_HANDLED;
         } else if(req->bRequest == REQ_CAN_SEND) {
             /* Primitive flow control (FIXME) */
             

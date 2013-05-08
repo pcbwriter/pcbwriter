@@ -160,7 +160,8 @@ void spi_setup(void)
 volatile int dma_done = 0;
 
 unsigned int n_scans;
-const unsigned int max_n_scans = 84;
+volatile unsigned int max_n_scans = 1;
+volatile int autostep = 0;
 
 void swap_buffers(void)
 {
@@ -187,7 +188,8 @@ void dma1_stream4_isr(void)
         if(buf_ready) {
             swap_buffers();
             n_scans = 0;
-            stepper_step(0);
+            if(autostep)
+                stepper_step(0);
         } else {
             cur_scan_buf = 0;
         }

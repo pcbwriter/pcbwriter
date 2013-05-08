@@ -78,7 +78,12 @@ bytes_per_line = int(math.ceil(width_px / 8))
 print "Loading image (%dx%d pixels):" % (width_px, height_px)
 img = ghostscript.load_image(args.fname, bbox, xres, yres, width_px, height_px)
 
+print "Setting up device"
 pcb = PCBWriter()
+
+pcb.set_n_scans(84)
+pcb.set_autostep(True)
+
 print "%d bytes/line" % bytes_per_line
 
 print "Transferring image: "
