@@ -12,4 +12,6 @@
 #define REQ_MOVE_STEPPER 0x92
 #define REQ_STEPPER_OFF 0x93
 
+#define REQ_CAN_SEND 0xC0
+
 #endif

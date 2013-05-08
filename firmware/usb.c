@@ -217,6 +217,18 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
             stepper_off();
             
             return USBD_REQ_HANDLED;
+        } else if(req->bRequest == REQ_CAN_SEND) {
+            /* Primitive flow control (FIXME) */
+            
+            if(!IS_DEVICE_TO_HOST(req->bmRequestType)) {
+                return USBD_REQ_NOTSUPP;
+            }
+            
+            data[0] = (dma_write_idx < K_IMAGE_WIDTH);
+            *buf = data;
+            *len = 4;
+            
+            return USBD_REQ_HANDLED;
         }
     }
     
@@ -244,15 +256,17 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
     } */
 }
 
-unsigned int dma_data_idx = 0;
-
 static void data_rx_cb(usbd_device *usbd_dev, u8 ep)
 {
     (void)ep;
     
-    int len = usbd_ep_read_packet(usbd_dev, 0x01, &dma_data[dma_data_idx + K_LEFT_OVERSCAN], 64);
-    dma_data_idx += len;
-    dma_data_idx = (dma_data_idx % K_IMAGE_WIDTH);
+    u16 max_len = (dma_write_idx < K_IMAGE_WIDTH - 64) ? 64 : (K_IMAGE_WIDTH - dma_write_idx);
+    
+    int len = usbd_ep_read_packet(usbd_dev, 0x01, get_write_buffer() + dma_write_idx + K_LEFT_OVERSCAN, max_len);
+    dma_write_idx += len;
+    
+    if(dma_write_idx == K_IMAGE_WIDTH)
+        write_done();
     
     // gpio_toggle(GPIOC, GPIO5);
 }

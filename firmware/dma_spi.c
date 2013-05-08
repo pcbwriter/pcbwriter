@@ -1,4 +1,6 @@
 #include "dma_spi.h"
+#include "stepper.h"
+#include "statusled.h"
 
 #include <libopencm3/stm32/f4/rcc.h>
 #include <libopencm3/stm32/f4/gpio.h>
@@ -6,7 +8,43 @@
 #include <libopencm3/stm32/f4/spi.h>
 #include <libopencm3/cm3/nvic.h>
 
-uint8_t dma_data[K_SCANLINE_LEN] __attribute__((aligned(4)));
+uint8_t dma_data_0[K_SCANLINE_LEN] __attribute__((aligned(4)));
+uint8_t dma_data_1[K_SCANLINE_LEN] __attribute__((aligned(4)));
+uint8_t dma_data_2[K_SCANLINE_LEN] __attribute__((aligned(4)));
+
+unsigned int dma_write_idx = 0;
+
+/* Buffer that is currently being scanned out. */
+unsigned int cur_scan_buf = 0;
+/* Buffer that is currently being written. */
+unsigned int cur_write_buf = 1;
+
+int buf_ready = 0;
+
+/* Functions that are internal to this module. */
+uint8_t* get_scan_buffer(void);
+void swap_buffers(void);
+
+/* Return pointer to beginning of buffer that is currently being scanned out. */
+uint8_t* get_scan_buffer(void)
+{
+    if(cur_scan_buf == 0) return dma_data_0;
+    else if(cur_scan_buf == 1) return dma_data_1;
+    else return dma_data_2;
+}
+
+/* Return pointer to beginning of buffer that USB data is to be written to. */
+uint8_t* get_write_buffer(void)
+{
+    if(cur_write_buf == 1) return dma_data_1;
+    else return dma_data_2;
+}
+
+/* Called by USB code to indicate that all data for the next line has been received. */
+void write_done(void)
+{
+    buf_ready = 1;
+}
 
 void dma_setup(void)
 {
@@ -20,7 +58,15 @@ void dma_setup(void)
         dma_data[i] = 0xFF;
     } */
     for(i=0; i<K_SCANLINE_LEN; i++) {
-        dma_data[i] = 0x00;
+        dma_data_0[i] = 0x00;
+    }
+    
+    for(i=0; i<K_SCANLINE_LEN; i++) {
+        dma_data_1[i] = 0x00;
+    }
+    
+    for(i=0; i<K_SCANLINE_LEN; i++) {
+        dma_data_2[i] = 0x00;
     }
     
     /* Enable peripheral clocks. */
@@ -89,7 +135,7 @@ void start_dma(void)
     
     dma_set_number_of_data(DMA1, DMA_STREAM4, K_SCANLINE_LEN);
     dma_set_peripheral_address(DMA1, DMA_STREAM4, (uint32_t)&SPI2_DR);
-    dma_set_memory_address(DMA1, DMA_STREAM4, (uint32_t)dma_data);
+    dma_set_memory_address(DMA1, DMA_STREAM4, (uint32_t)get_scan_buffer());
     
     dma_enable_stream(DMA1, DMA_STREAM4);
     
@@ -113,6 +159,17 @@ void spi_setup(void)
 
 volatile int dma_done = 0;
 
+unsigned int n_scans;
+const unsigned int max_n_scans = 84;
+
+void swap_buffers(void)
+{
+    cur_scan_buf = cur_write_buf;
+    cur_write_buf = (cur_scan_buf == 1 ? 2 : 1);
+    dma_write_idx = 0;
+    buf_ready = 0;
+}
+
 void dma1_stream4_isr(void)
 {
     dma_clear_interrupt_flags(DMA1, DMA_STREAM4, DMA_ISR_TCIF);
@@ -124,4 +181,19 @@ void dma1_stream4_isr(void)
     spi_write(SPI2, 0x00);
     
     laser_low_on();
+    
+    /* Prepare next line to be scanned out. */
+    if(cur_scan_buf == 0 || n_scans == max_n_scans) {
+        if(buf_ready) {
+            swap_buffers();
+            n_scans = 0;
+            stepper_step(0);
+        } else {
+            cur_scan_buf = 0;
+        }
+    }
+    
+    set_status(LED_BLUE, cur_scan_buf == 0);
+    
+    n_scans++;
 }
