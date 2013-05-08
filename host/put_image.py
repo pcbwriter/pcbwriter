@@ -1,65 +1,93 @@
 #!/usr/bin/env python
 from __future__ import division
 import math
-import array
+from array import array
 import subprocess
-import usb.core
-import usb.util
+import time
+import sys
+import ghostscript
+import argparse
+from pcbwriter import PCBWriter
 
-def load_image(fname, bbox, scale):
-    bbox_width = bbox[2] - bbox[0]
-    bbox_height = bbox[3] - bbox[1]
+parser = argparse.ArgumentParser(description="Send data to PCBWriter device.")
+parser.add_argument("-b", "--bbox", help="specify bounding box")
+# parser.add_argument("-t", "--top-margin", help="top margin (mm)")
+# parser.add_argument("-l", "--left-margin", help="left margin (mm)")
+parser.add_argument("fname")
+
+args = parser.parse_args()
+
+def pos(px):
+    a = 3.24776e-13
+    b = -2.62591e-08
+    c = 0.00277007
+    d = 0.417002
     
-    args = ["gs"]
-    args += ["-o", "%stdout%"]
-    args += ["-dQUIET"]
-    args += ["-dLastPage=1"]
-    args += ["-sDEVICE=bit"]
-    args += ["-r%d" % (scale*72)]
-    args += ["-g%dx%d" % (scale*bbox_width, scale*bbox_height)]
-    args += ["-c", "<</Install {%d %d translate}>> setpagedevice" % (-bbox[0], -bbox[1])]
-    args += ["-f", fname]
+    return a*px**3 + b*px**2 + c*px + d
 
-    print " ".join(args)
+def sample(line, pos):
+    px = int(math.ceil(pos * 100. - 0.5))
+    if line[px // 8] & (128 >> (px % 8)):
+        return 1
+    else:
+        return 0
 
-    p = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-    (stdout_data, stderr_data) = p.communicate(None)
-
-    if stderr_data != "":
-        print "Ghostscript subprocess encountered an error:"
-        print stderr_data
-        raise RuntimeError
+def transform_line(line):
+    output = array("B", [0]*6000)
     
-    img = array.array("B", stdout_data)
+    for px in range(0, 48000):
+        if not sample(line, pos(px)):
+            output[px // 8] = output[px // 8] | (128 >> (px % 8))
     
-    return img
+    return output
 
-# FIXME
-bbox_x0 = 269
-bbox_y0 = 269
-bbox_x1 = 423
-bbox_y1 = 315
-scale = 300
+bbox = None
+if args.bbox:
+    try:
+        bbox = [ float(s) for s in args.bbox.split(",")]
+        if not len(bbox) == 4:
+            raise ValueError
+    except ValueError:
+        print "Bounding box format: <x0>,<y0>,<x1>,<y1>"
+        sys.exit(1)
 
-bbox_width = bbox_x1 - bbox_x0
-bbox_height = bbox_y1 - bbox_y0
+if bbox == None:
+    bbox = ghostscript.get_bbox(args.fname)
 
-bytes_per_line = int(math.ceil(scale*bbox_width / 8.))
+left_margin = 10.
+right_margin = 0.
+top_margin = 0.
+bottom_margin = 0.
 
-print "Loading image:"
-img = load_image("test.pdf", (bbox_x0, bbox_y0, bbox_x1, bbox_y1), scale)
+bbox[0] -= (left_margin/25.4*72.0)
+bbox[1] -= (top_margin/25.4*72.0)
+bbox[2] += (right_margin/25.4*72.0)
+bbox[3] += (bottom_margin/25.4*72.0)
+
+xres = 2540   # dpi, i.e 10um per pixel
+yres = 600
+
+bbox_width = bbox[2] - bbox[0]
+bbox_height = bbox[3] - bbox[1]
+
+width_px = 11000 # Render 110 mm strip
+height_px = int(math.ceil((yres*bbox_height)/72))
+
+bytes_per_line = int(math.ceil(width_px / 8))
+
+print "Loading image (%dx%d pixels):" % (width_px, height_px)
+img = ghostscript.load_image(args.fname, bbox, xres, yres, width_px, height_px)
+
+pcb = PCBWriter()
+print "%d bytes/line" % bytes_per_line
 
 print "Transferring image: "
-PCBWRITER_TIMEOUT = 100 # ms
 
-dev = usb.core.find(idVendor = 0x1337, idProduct = 0xabcd)
-if dev is None:
-    raise RuntimeError("Device not found")
-
-for line in range(0, bbox_height*scale):
-    print "Transferring line %d/%d" % (line, bbox_height*scale)
-    if dev.write(1, img[line*bytes_per_line:(line+1)*bytes_per_line], 0, PCBWRITER_TIMEOUT) != bytes_per_line:
-        raise RuntimeError, "Failed to communicate with endpoint."
-    if dev.write(1, array.array("B", [0]*(6000-bytes_per_line)).tostring(), 0, PCBWRITER_TIMEOUT) != (6000 - bytes_per_line):
-        raise RuntimeError, "Failed to communicate with endpoint."
+for line in range(0, height_px):
+    print "Transferring line %d/%d" % (line, height_px)
+    
+    # line_data = array.array("B", [255]*2000)
+    line_data = transform_line(img[line*bytes_per_line:(line+1)*bytes_per_line])
+    
+    pcb.put_line(line_data, fill=False, wait=True)
 
