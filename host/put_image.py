@@ -12,7 +12,8 @@ from pcbwriter import PCBWriter
 parser = argparse.ArgumentParser(description="Send data to PCBWriter device.")
 parser.add_argument("-b", "--bbox", help="specify bounding box")
 # parser.add_argument("-t", "--top-margin", help="top margin (mm)")
-# parser.add_argument("-l", "--left-margin", help="left margin (mm)")
+parser.add_argument("-l", "--left-margin", help="left margin (mm) [default: 5mm]")
+parser.add_argument("-n", "--n-scans", help="number of scans per line (i.e. exposure time) [default: 84]")
 parser.add_argument("fname")
 
 args = parser.parse_args()
@@ -54,7 +55,16 @@ if args.bbox:
 if bbox == None:
     bbox = ghostscript.get_bbox(args.fname)
 
-left_margin = 10.
+if args.n_scans:
+    n_scans = int(args.n_scans)
+else:
+    n_scans = 84
+
+if args.left_margin:
+    left_margin = float(args.left_margin)
+else:
+    left_margin = 5.
+
 right_margin = 0.
 top_margin = 0.
 bottom_margin = 0.
@@ -81,7 +91,7 @@ img = ghostscript.load_image(args.fname, bbox, xres, yres, width_px, height_px)
 print "Setting up device"
 pcb = PCBWriter()
 
-pcb.set_n_scans(84)
+pcb.set_n_scans(n_scans)
 pcb.set_autostep(True)
 
 print "%d bytes/line" % bytes_per_line
