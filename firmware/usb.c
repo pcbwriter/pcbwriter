@@ -220,7 +220,7 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
         }
     }
     
-    PCBUSBLOG("Got unkown request: 0x%x\n", req->bmRequestType);
+    PCBUSBLOG("Got unknown request: 0x%x\n", req->bmRequestType);
 
     return USBD_REQ_NEXT_CALLBACK;
     
