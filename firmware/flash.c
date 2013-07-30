@@ -16,7 +16,7 @@ void pcb_flash_store(uint16_t key, uint8_t byte)
         return;
     }
     
-    flash_program_byte(KPCB_FLASH_BASE_ADDR + key, byte, FLASH_CR_PROGRAM_X8);
+    flash_program_byte(KPCB_FLASH_BASE_ADDR + key, byte);
 }
 
 uint8_t pcb_flash_restore(uint16_t key)
