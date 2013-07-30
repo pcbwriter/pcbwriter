@@ -173,7 +173,7 @@ void swap_buffers(void)
 
 void dma1_stream4_isr(void)
 {
-    dma_clear_interrupt_flags(DMA1, DMA_STREAM4, DMA_ISR_TCIF);
+    dma_clear_interrupt_flags(DMA1, DMA_STREAM4, DMA_TCIF);
     dma_disable_stream(DMA1, DMA_STREAM4);
     
     dma_done = 1;
