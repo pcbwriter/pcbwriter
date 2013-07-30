@@ -110,10 +110,10 @@ static const char *usb_strings[] = {
     "PCBWriter",
 };
 
-u8 data[DATA_LEN];
+uint8_t data[DATA_LEN];
 
-static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8 **buf,
-        u16 *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
+static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, uint8_t **buf,
+        uint16_t *len, void (**complete)(usbd_device *usbd_dev, struct usb_setup_data *req))
 {
     (void)complete;
     (void)buf;
@@ -267,11 +267,11 @@ static int control_request(usbd_device *usbd_dev, struct usb_setup_data *req, u8
     } */
 }
 
-static void data_rx_cb(usbd_device *usbd_dev, u8 ep)
+static void data_rx_cb(usbd_device *usbd_dev, uint8_t ep)
 {
     (void)ep;
     
-    u16 max_len = (dma_write_idx < K_IMAGE_WIDTH - 64) ? 64 : (K_IMAGE_WIDTH - dma_write_idx);
+    uint16_t max_len = (dma_write_idx < K_IMAGE_WIDTH - 64) ? 64 : (K_IMAGE_WIDTH - dma_write_idx);
     
     int len = usbd_ep_read_packet(usbd_dev, 0x01, get_write_buffer() + dma_write_idx + K_LEFT_OVERSCAN, max_len);
     dma_write_idx += len;
@@ -286,7 +286,7 @@ struct debug_data_t debug_buf[16];
 unsigned int buf_start = 0;
 unsigned int buf_end = 0;
 
-static void data_tx_cb(usbd_device *usbd_dev, u8 ep)
+static void data_tx_cb(usbd_device *usbd_dev, uint8_t ep)
 {
     (void) usbd_dev;
     (void) ep;
@@ -298,7 +298,7 @@ static void data_tx_cb(usbd_device *usbd_dev, u8 ep)
     }
 }
 
-static void set_config(usbd_device *usbd_dev, u16 wValue)
+static void set_config(usbd_device *usbd_dev, uint16_t wValue)
 {
     (void)wValue;
 
@@ -323,7 +323,7 @@ void usb_setup(void)
             GPIO9 | GPIO11 | GPIO12);
     gpio_set_af(GPIOA, GPIO_AF10, GPIO9 | GPIO11 | GPIO12);
     
-    usbd_dev = usbd_init(&otgfs_usb_driver, &dev, &config, usb_strings, 3);
+    usbd_dev = usbd_init(&otgfs_usb_driver, &dev, &config, usb_strings, 3, data, DATA_LEN);
     usbd_register_set_config_callback(usbd_dev, set_config);
 }
 
