@@ -21,7 +21,7 @@ extern volatile unsigned int max_n_scans;
 extern volatile int autostep;
 
 #define K_SCANLINE_LEN 11900
-#define K_LEFT_OVERSCAN 1500
+#define K_LEFT_OVERSCAN 2000
 #define K_IMAGE_WIDTH 6000
 
 #endif

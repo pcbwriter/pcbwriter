@@ -4,18 +4,18 @@
 #include "dma_spi.h"
 #include "debugdata.h"
 
-const unsigned int K_STARTUP_PWR = 3700;
+const unsigned int K_STARTUP_PWR = 0;
 
 /* Controller parameters */
-const int32_t K_CONTROL_MIN = 3400;
-const int32_t K_CONTROL_MAX = 4000;
-const int32_t K_CONTROL_CENTER = 3700; //(K_CONTROL_MAX + K_CONTROL_MIN) / 2;
+const int32_t K_CONTROL_MIN = 0;
+const int32_t K_CONTROL_MAX = 4095;
+const int32_t K_CONTROL_CENTER = 2048; //(K_CONTROL_MAX + K_CONTROL_MIN) / 2;
 
-const int32_t K_INTEGRAL_CLAMP = 30000;
+const int32_t K_INTEGRAL_CLAMP = 1000000;
 
 int des_speed = 0;
 
-int integral = 0;
+int32_t integral = 0;
 
 uint32_t seq_num = 0;
 int debug_out = 0;
@@ -46,11 +46,11 @@ void enable_debug_out(int enable)
 
 /* Run a single PI controller step. Returns current difference between speed 
    and desired speed. */
-int motor_ctrl_step(int delta)
+int motor_ctrl_step(uint32_t delta)
 {
-    int speed = (uint32_t) 100000000 / delta;
+    int32_t speed = (uint32_t) 1000000000 / delta;
     
-    int32_t control = K_CONTROL_CENTER - (speed - des_speed) - integral/4;
+    int32_t control = K_CONTROL_CENTER + (speed - des_speed) + integral/128;
     if(control > K_CONTROL_MAX) control = K_CONTROL_MAX;
     if(control < K_CONTROL_MIN) control = K_CONTROL_MIN;
     

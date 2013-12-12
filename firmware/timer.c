@@ -18,7 +18,7 @@ void timer_setup(void)
     timer_reset(TIM1);
     
     /* Configure prescaler. */
-    timer_set_prescaler(TIM1, 160);
+    timer_set_prescaler(TIM1, 16);
     
     /* Configure PE11 (AF1: TIM1_CH2) (SYNC_IN). */
     rcc_peripheral_enable_clock(&RCC_AHB1ENR, RCC_AHB1ENR_IOPEEN);
@@ -54,18 +54,25 @@ void tim1_up_tim10_isr(void)
     }
 }
 
-int last_ccr = 0;
+uint32_t last_ccr = 0;
 int dma_enabled = 0;
 int motor_ok = 16;
 
 void tim1_cc_isr(void)
 {
     if(timer_get_flag(TIM1, TIM_SR_CC2IF)) {
-        int ccr = TIM_CCR2(TIM1);
-        int save_n_overflow = n_overflow;
+        uint32_t ccr = TIM_CCR2(TIM1);
+        uint32_t save_n_overflow = n_overflow;
         n_overflow = 0;
         
-        int delta = (ccr + (save_n_overflow<<16)) - last_ccr;
+        uint32_t delta = (ccr + (save_n_overflow<<16)) - last_ccr;
+        
+        gpio_set(GPIOB, GPIO0);
+        __asm("nop");
+        __asm("nop");
+        __asm("nop");
+        __asm("nop");
+        gpio_clear(GPIOB, GPIO0);
         
         if(dma_enabled)
             start_dma();
@@ -96,14 +103,14 @@ void tim1_cc_isr(void)
             motor_ok = 16;
         }
         
-        if(delta < 100) {
+        /* if(delta < 100) {
             gpio_set(GPIOB, GPIO0);
             __asm("nop");
             __asm("nop");
             __asm("nop");
             __asm("nop");
             gpio_clear(GPIOB, GPIO0);
-        }
+        } */
     }
 }
 
