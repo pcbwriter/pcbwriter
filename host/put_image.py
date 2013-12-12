@@ -18,6 +18,14 @@ parser.add_argument("fname")
 
 args = parser.parse_args()
 
+def corr(pos):
+    a = -1.55911e-06
+    b = 1.9763e-05
+    c = 1.01584
+    d = 0.0251532
+    
+    return a*pos**3 + b*pos**2 + c*pos + d
+
 def pos(px):
     a = 3.24776e-13
     b = -2.62591e-08
@@ -37,7 +45,7 @@ def transform_line(line):
     output = array("B", [0]*6000)
     
     for px in range(0, 48000):
-        if not sample(line, pos(px)):
+        if not sample(line, corr(pos(px))):
             output[px // 8] = output[px // 8] | (128 >> (px % 8))
     
     return output
